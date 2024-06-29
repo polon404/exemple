@@ -13,7 +13,31 @@ const MainForm = () => {
   const [phoneNumberError, setPhoneNumberError] = useState('');
   const [emailError, setEmailError] = useState('');
   const [futureDateError, setFutureDateError] = useState('');
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [agree, setAgree] = useState(true);
+  const [startTimeError, setStartTimeError] = useState('');
+  const [endTimeError, setEndTimeError] = useState('');
 
+  const handleStartTimeChange = (value) => {
+    setStartTime(value);
+      if (value.trim() === '') {
+        setStartTimeError('Время начала не может быть пустым');
+      } else {
+      setStartTimeError('');
+      }
+    };
+
+const handleEndTimeChange = (value) => {
+  setEndTime(value);
+  if (value.trim() === '') {
+    setEndTimeError('Время конца не может быть пустым');
+  } else if (new Date(value) - new Date(startTime) < 3600000) {
+    setEndTimeError('Время конца должно быть не менее чем на час больше времени начала');
+  } else {
+    setEndTimeError('');
+  }
+};
   const handleFullNameChange = (value) => {
     setFullName(value);
     if (value.trim() === '') {
@@ -25,14 +49,7 @@ const MainForm = () => {
     }
   };
 
-  const handleDateOfBirthChange = (value) => {
-    setDateOfBirth(value);
-    if (value.trim() === '') {
-      setDateOfBirthError('Дата рождения не может быть пустой');
-    } else {
-      setDateOfBirthError('');
-    }
-  };
+  
 
   const formatPhoneNumber = (value) => {
     const cleaned = ('' + value).replace(/\D/g, '');
@@ -55,14 +72,15 @@ const MainForm = () => {
     }
   };
 
-  const handleEmailChange = (value) => {
-    setEmail(value);
+  const [futureTime, setFutureTime] = useState('');
+  const [futureTimeError, setFutureTimeError] = useState('');
+  
+  const handleFutureTimeChange = (value) => {
+    setFutureTime(value);
     if (value.trim() === '') {
-      setEmailError('Email не может быть пустым');
-    } else if (!validateEmail(value)) {
-      setEmailError('Пожалуйста, введите корректный адрес электронной почты (латиницей, с @ и .)');
+      setFutureTimeError('Время не может быть пустым');
     } else {
-      setEmailError('');
+      setFutureTimeError('');
     }
   };
 
@@ -83,15 +101,11 @@ const MainForm = () => {
       case 'fullName':
         handleFullNameChange(value);
         break;
-      case 'dateOfBirth':
-        handleDateOfBirthChange(value);
-        break;
+      
       case 'phoneNumber':
         handlePhoneNumberChange(value);
         break;
-      case 'email':
-        handleEmailChange(value);
-        break;
+      
       case 'futureDate':
         handleFutureDateChange(value);
         break;
@@ -122,19 +136,7 @@ const MainForm = () => {
           <label htmlFor="fullName" className="label sr-only">ФИО</label>
           {fullNameError && <p className="error">{fullNameError}</p>}
         </div>
-        <div className="formGroup">
-          <input
-            type="date"
-            id="dateOfBirth"
-            value={dateOfBirth}
-            onChange={(e) => handleDateOfBirthChange(e.target.value)}
-            onBlur={handleBlur}
-            placeholder="01.01.1990"
-            required
-          />
-          <label htmlFor="dateOfBirth" className="label sr-only">Дата рождения</label>
-          {dateOfBirthError && <p className="error">{dateOfBirthError}</p>}
-        </div>
+        
         <div className="formGroup">
           <input
             type="text"
@@ -149,30 +151,41 @@ const MainForm = () => {
           {phoneNumberError && <p className="error">{phoneNumberError}</p>}
         </div>
         <div className="formGroup">
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => handleEmailChange(e.target.value)}
-            onBlur={handleBlur}
-            placeholder="example@example.com"
-            required
-          />
-          <label htmlFor="email" className="label sr-only">Электронная почта</label>
-          {emailError && <p className="error">{emailError}</p>}
-        </div>
-        <div className="formGroup">
-          <input
-            type="date"
-            id="futureDate"
-            value={futureDate}
-            onChange={(e) => handleFutureDateChange(e.target.value)}
-            onBlur={handleBlur}
-            required
-          />
-          <label htmlFor="futureDate" className="label sr-only">Будущая дата</label>
-          {futureDateError && <p className="error">{futureDateError}</p>}
-        </div>
+  <input
+    type="datetime-local"
+    id="startTime"
+    value={startTime}
+    onChange={(e) => handleStartTimeChange(e.target.value)}
+    onBlur={handleBlur}
+    required
+  />
+  <label htmlFor="startTime" className="label">Время начала</label>
+  {startTimeError && <p className="error">{startTimeError}</p>}
+</div>
+
+<div className="formGroup">
+  <input
+    type="datetime-local"
+    id="endTime"
+    value={endTime}
+    onChange={(e) => handleEndTimeChange(e.target.value)}
+    onBlur={handleBlur}
+    required
+  />
+  <label htmlFor="endTime" className="label">Время конца</label>
+  {endTimeError && <p className="error">{endTimeError}</p>}
+</div>
+<div className="formGroup">
+  <input
+    type="checkbox"
+    id="agree"
+    checked={agree}
+    onChange={(e) => setAgree(e.target.checked)}
+    required
+  />
+  <label htmlFor="agree" className="label">Согласен с условиями</label>
+</div>
+        
         <button type="submit">Отправить</button>
       </form>
     </main>
